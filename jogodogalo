@@ -1,0 +1,352 @@
+/* JOGO DO GALO
+
+Melhorias a fazer:
+
+-Regras de jogo
+-Pontuação que os utilizadores estão (0-0, 1-0 etc..)
+-Regras- fazer um mapa do jogo no printf e escrever lá os numeros
+-Quando jogar numa casa jaá preenchida, alterar o utilizador que a casa já está preenchida
+*/
+
+#include <stdio.h>
+#include <conio.h>
+#include <locale.h>
+#define FALSE 0
+#define TRUE 1
+
+int campoJogo [3][3] = {0};
+int turno;
+int vencedor = FALSE;
+
+char jog1[50], jog2[50];
+
+void iniciarCampo(){
+	
+	int i,j;
+	for (i = 0; i < 3; i++){
+		for(j = 0; j < 3; j++){
+
+			campoJogo[i][j]= 0;
+		}
+	}
+	turno = 1;
+}
+
+void mostrarMapa(){
+
+	int i,j;
+	system ("CLS");
+	printf("\n\n\n");
+	for (i = 0; i < 3; i++){
+		printf("\t\t\t");
+		for (j = 0; j < 3; j++){
+			if (campoJogo[i][j]==0){
+				printf("   ");
+			}
+			if (campoJogo[i][j]==1){
+				printf(" %c ",215);
+			}
+			if (campoJogo[i][j]==2){
+				printf(" %c ", 527);
+			}
+			if(j != 2){
+				printf("|");
+			}
+		}	
+		printf("\n");	
+		if (i != 2){
+			printf("\t\t\t-----------\n"); //if numero de linha igual a tal nao aparece na ultima linha
+		}
+	}
+}
+
+int validarJogada(int pos){
+	
+	if (pos ==  1){
+		if (campoJogo[2][0] == 0){
+			campoJogo[2][0] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  2){
+		if (campoJogo[2][1] == 0){
+			campoJogo[2][1] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  3){
+		if (campoJogo[2][2] == 0){
+			campoJogo[2][2] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  4){
+		if (campoJogo[1][0] == 0){
+			campoJogo[1][0] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  5){
+		if (campoJogo[1][1] == 0){
+			campoJogo[1][1] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  6){
+		if (campoJogo[1][2] == 0){
+			campoJogo[1][2] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  7){
+		if (campoJogo[0][0] == 0){
+			campoJogo[0][0] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  8){
+		if (campoJogo[0][1] == 0){
+			campoJogo[0][1] = turno;
+			return TRUE;
+		}
+	}
+	if (pos ==  9	){
+		if (campoJogo[0][2] == 0){
+			campoJogo[0][2] = turno;
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+int validarVencedor(int jogador){
+	
+	int i,j;
+	
+	if (campoJogo[0][0]==jogador && campoJogo[1][0]==jogador && campoJogo[2][0]==jogador) { // Op??o Vertical
+		return jogador;	
+	} else if (campoJogo[0][1]==jogador && campoJogo[1][1]==jogador && campoJogo[2][1]==jogador) { // Op??o Vertical
+		return jogador;
+	} else if (campoJogo[0][2]==jogador && campoJogo[1][2]==jogador && campoJogo[2][2]==jogador) { // Op??o Vertical
+		return jogador;
+	} else if (campoJogo[0][0]==jogador && campoJogo[0][1]==jogador && campoJogo[0][2]==jogador) { // Op??o Horizontal
+		return jogador;
+	} else if (campoJogo[1][0]==jogador && campoJogo[1][1]==jogador && campoJogo[1][2]==jogador) { // Op??o Horizontal 
+		return jogador;
+	} else if (campoJogo[2][0]==jogador && campoJogo[2][1]==jogador && campoJogo[2][2]==jogador) { // Op??o Horizontal
+		return jogador;
+	} else if (campoJogo[0][0]==jogador && campoJogo[1][1]==jogador && campoJogo[2][2]==jogador) { // Op??o Diagonal Esquerda Cima Baixo Direita
+		return jogador;
+	} else if (campoJogo[2][0]==jogador && campoJogo[1][1]==jogador && campoJogo[0][2]==jogador) { // Op??o Diagonal Esquerda Baixo Cima Direita
+		return jogador;
+	} else if (campoJogo[0][2]==jogador && campoJogo[1][1]==jogador && campoJogo[2][0]==jogador) { // Op??o Diagonal Direita Cima Esquerda Baixo
+		return jogador;
+	} else if (campoJogo[2][0]==jogador && campoJogo[1][1]==jogador && campoJogo[0][2]==jogador) { // Op??o Diagonal Direita Baixo Esquerda Cima
+		return jogador;
+	}
+	
+	//Empate
+	for (i = 0; i < 3; i++){
+		for(j = 0; j < 3; j++){
+			if (campoJogo[i][j]==0){
+			return 0;	
+			}
+		}
+	}
+	return 3;
+}
+
+int main (){
+	
+	char jogadaChar;
+	int jogada;
+	int i;
+	int c;
+	int b;
+	int random;
+	char opChar;
+	int op=-1;
+	int jogadaValida;
+	int vencedorExiste = 0;
+	int pontuacaoJogador1=0;
+	int pontuacaoJogador2=0;
+	setlocale(LC_ALL, "PORTUGUESE");
+	system("Color F0");
+	
+	printf("\t\t\t\t\tJOGO DO GALO\n");
+	sleep(3);
+	printf("Regras de jogo\n\n");
+	sleep(1);
+	printf("1. O jogo é jogado em um tabuleiro 3x3.\n");
+	printf("2. O objetivo é conseguir três símbolos consecutivos na horizontal, vertical ou diagonal.\n");
+    printf("3. Um jogador representa o símbolo 'X', e o outro jogador representa o símbolo 'O'.\n");
+    printf("4. Cada jogador pode escolher uma posição vazia no NumPad para jogar (1 a 9 como no exemplo a baixo).\n\n");
+    printf("\t\t\t\t 7 | 8 | 9\n");
+    printf("\t\t\t\t-----------\n");
+    printf("\t\t\t\t 4 | 5 | 6\n");
+    printf("\t\t\t\t-----------\n");
+    printf("\t\t\t\t 1 | 2 | 3\n");
+	sleep(3);
+	
+	printf("\n\nPressione uma tecla para continuar.\n\n");
+	system("pause");
+	system("CLS");
+	
+	printf("\t\t\t\t\tA carregar dados do jogo.");
+	sleep(1);
+	printf(".");
+	sleep(1);
+	printf(".");
+	sleep(2);
+	system("CLS");
+	
+	printf("\n\n\t\t\tNome do jogador 1: ");
+	gets(jog1);
+
+	printf("\n\t\t\tNome do jogador 2: ");
+	gets(jog2);
+	sleep(1);
+	printf("\n\t\t\t(É seleccionado aleatoriamente quem começa a jogar)");
+	
+	printf("\n\n\t\t\tPressione uma tecla para jogar.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	system("pause");
+	system("CLS");
+	
+	iniciarCampo();
+	mostrarMapa();
+	
+	srand(time(NULL));
+	random=rand()%2;
+	if(random==0){
+		turno=1;
+	}else{
+		turno=2;
+	}
+	
+	do {
+		if (turno== 1) {
+			printf("\n\t\t\tJogador %s onde deseja jogar?", jog1);
+		} else {
+			printf("\n\t\t\tJogador %s onde deseja jogar?", jog2);
+		}
+		
+		do {
+			jogadaChar= getch();
+			jogada=(jogadaChar - '0');
+		} while (jogada < 1 || jogada > 9);
+		
+		switch (jogada){
+			
+			case 1:
+				jogadaValida = validarJogada(1);
+				break;
+		
+			case 2:
+				jogadaValida = validarJogada(2);
+				break;
+			
+			case 3:
+				jogadaValida = validarJogada(3);
+				break;
+			
+			case 4:
+				jogadaValida = validarJogada(4);
+				break;
+			
+			case 5:
+				jogadaValida = validarJogada(5);
+				break;
+				
+			case 6:
+				jogadaValida = validarJogada(6);
+				break;
+				
+			case 7:
+				jogadaValida = validarJogada(7);
+				break;
+			
+			case 8:
+				jogadaValida = validarJogada(8);
+				break;
+				
+			case 9:
+				jogadaValida = validarJogada(9);
+				break;
+		}
+		
+		mostrarMapa();
+		
+		vencedorExiste = validarVencedor(turno);
+		if (vencedorExiste != 0) {
+            if (vencedorExiste == 3) {
+                printf("\n\t\t\tEmpate!\n");
+            } else {
+            	if(turno == 1){
+            		printf("\n\t\t\tParabéns jogador %s! Ganhou o jogo!\n", jog1);
+            		for (i = 0; i < 10; i++){
+						system("Color E0");
+						system("Color A0");
+						system("Color 90");
+						system("Color C0");
+						system("Color D0");	
+					}
+					system("Color F0");
+					
+					pontuacaoJogador1++;
+					
+				} else { 
+					printf("\n\t\t\tParabéns jogador %s! Ganhou o jogo!\n", jog2);
+					for (i = 0; i < 10; i++){
+						system("Color E0");
+						system("Color A0");
+						system("Color 90");
+						system("Color C0");
+						system("Color D0");	
+					}
+					system("Color F0");
+					pontuacaoJogador2++;
+				}
+                
+            } 
+			sleep(1);
+			printf("\n\t\t\tA pontuação do jogo está a %d-%d!", pontuacaoJogador1, pontuacaoJogador2);
+			sleep(2);
+			
+            do {
+                printf("\n\n\t\t\tDeseja jogar de novo? (Escreva '1' para Sim ou '0' para Não): ");
+                opChar= getch();
+				op=(opChar - '0');
+                if (op == 1) {
+                    system ("CLS");
+                    printf("\t\t\t\t\tA iniciar novo jogo.");
+                    sleep(1);
+                    printf(".");
+                    sleep(1);
+					printf(".");
+                    sleep(1);
+                    iniciarCampo(); // Reinicializa o campo de jogo
+                    mostrarMapa(); // Mostra o novo mapa
+                    pontuacaoJogador1=0;
+                    pontuacaoJogador2=0;
+                } else if (op == 0) {
+                    printf("\n\n\t\t\tFim do jogo. Obrigado por jogar!\n");
+                } else {
+                    printf("\n\n\t\t\tOpção inválida. Escreva '1' para Sim ou '0' para Não.");
+                    sleep(2);
+                }
+                
+            } while (op != 0 && op != 1);
+    	}
+    	if (jogadaValida == TRUE) {
+    		if(op==1){
+				turno=1;
+				op=-1;
+			} else {
+				turno = (turno == 1) ? 2 : 1; // Troca o turno entre jogadores
+			}
+		}
+    } while (op != 0);
+		
+    return 0;
+}
